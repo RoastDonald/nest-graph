@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
+import Post from 'src/posts/post.entity';
+import User from 'src/users/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -14,8 +15,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [__dirname + '/../**/*.entity.ts'],
+        entities: [Post, User],
         synchronize: true,
+        
       }),
     }),
   ],

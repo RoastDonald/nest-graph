@@ -1,48 +1,43 @@
-import { Injectable } from "@nestjs/common";
-import { User } from "./models/user";
-import { CreateUserInput } from './dto/input/create-user.input';
-import {v4 as uuidv4} from 'uuid';
-import { UpdateUserInput } from './dto/input/update-user.input';
-import { GetUserArgs } from './dto/args/get-user.args';
-import { GetUsersArgs } from "./dto/args/get-users.args";
-import { DeleteUserInput } from "./dto/input/delete-user.input";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CreateUserInput } from "./dto/input/create-user.input";
+import { UpdateUserInput } from "./dto/input/update-user.input";
+import User from "./user.entity";
 
 
 @Injectable()
-export class UserService {
-    private users: User[] = [];
+export class UsersService {
 
-    public createUser(createUserData: CreateUserInput):User {
-        const user: User = {
-            userId: uuidv4(),
-            ...createUserData
-        }
+    constructor(
+        @InjectRepository(User)
+        private userRepository: Repository<User>
+    ){}
+    
+    async getByEmail(email:string){
+        const user = await this.userRepository.findOne({email});
+        if(user)return user;
+        throw new HttpException('User with this email does not exist',HttpStatus.NOT_FOUND);
+    }
 
-        this.users.push(user);
-        return user;
+    async getById(id: number){
+        const user = this.userRepository.findOne({id});
+        if(user)return user;
+        throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    async create(userData: CreateUserInput){
+        const newUser =  this.userRepository.create(userData);
+        await this.userRepository.save(newUser);
+        return newUser; 
+    }
+
+    async getAll(ids: [String]){
+        const users = await this.userRepository.findByIds(ids);
+        if(users)return users;
+        throw new HttpException('Users with these ids do not exist', HttpStatus.NOT_FOUND);
 
     }
 
-    public updateUser(updateUserData: UpdateUserInput):User {
-        const user = this.users.find(user=> user.userId === updateUserData.userId);
-        Object.assign(user,updateUserData);
-        return user;
-    }
-
-    public getUsers(getUsersArgs: GetUsersArgs):User[] {
-        return getUsersArgs.userIds.map(userId=> this.getUser({userId}));
-    }
-
-    public getUser(getUserArgs: GetUserArgs):User{
-        return this.users.find(user=> user.userId === getUserArgs.userId);
-    }   
-    public deleteUser(deleteUserData: DeleteUserInput):User {
-        const userIdx = this.users.findIndex(user=>user.userId === deleteUserData.userId);
-        const user = this.users[userIdx];  
-        this.users.splice(userIdx);
-        return user;
-        
-    }
-
-
+    
 }

@@ -6,6 +6,6 @@ import { IsNotEmpty } from "class-validator";
 export class GetUserArgs {
     @Field()
     @IsNotEmpty()  
-    userId: string;
+    userId: number;
 
 }

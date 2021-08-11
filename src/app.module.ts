@@ -8,6 +8,7 @@ import { PostsModule } from './posts/posts.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptionsLogger.filter';
 import { join } from 'path';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { join } from 'path';
     }),
     DatabaseModule,
     UserModule,
-    PostsModule,
+    AuthenticationModule,
+    // PostsModule,
   ],
   controllers: [],
   providers: [

@@ -9,15 +9,38 @@ type User {
   password: String!
 }
 
+type UserToken {
+  token: String!
+  user: User!
+}
+
 type Query {
   user(userId: Float!): User
 }
 
 type Mutation {
   createUser(createUserData: CreateUserInput!): User!
+  deleteUser(deleteUserData: DeleteUserInput!): Boolean!
+  login(input: LoginUserInput!): UserToken!
+  register(input: RegisterUserInput!): UserToken!
 }
 
 input CreateUserInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+input DeleteUserInput {
+  userId: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input RegisterUserInput {
   email: String!
   name: String!
   password: String!

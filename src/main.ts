@@ -7,7 +7,7 @@ import { ExceptionsLoggerFilter } from './utils/exceptionsLogger.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new ExceptionsLoggerFilter(httpAdapter));
+  // app.useGlobalFilters(new ExceptionsLoggerFilter(httpAdapter));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(
     app.get(Reflector))
   );

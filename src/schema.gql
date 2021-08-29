@@ -21,8 +21,8 @@ type Query {
 type Mutation {
   createUser(createUserData: CreateUserInput!): User!
   deleteUser(deleteUserData: DeleteUserInput!): Boolean!
-  login(input: LoginUserInput!): UserToken!
-  register(input: RegisterUserInput!): UserToken!
+  login(LoginUserInput: LoginUserInput!): UserToken!
+  register(RegisterUserInput: RegisterUserInput!): UserToken!
 }
 
 input CreateUserInput {

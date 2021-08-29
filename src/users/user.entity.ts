@@ -1,5 +1,6 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Geometry, Point } from 'geojson';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Exclude } from 'class-transformer';
 
 
@@ -25,5 +26,25 @@ export default class User {
     @Exclude()
     @Column()
     public password: string;
+
+    // @Index({ spatial: true })
+    // @Column({
+    //   type: 'geography',
+    //   spatialFeatureType: 'Point', 
+    //   srid: 4326,
+    //   nullable: true,
+    // })
+    // location:Point
+
+    // @Column({ type: 'varchar', name: 's_city' })
+    // city: string;
+
+    @Exclude()
+    @CreateDateColumn()
+    createdAt: Date;
+    
+    @Exclude()
+    @UpdateDateColumn()
+    updatedAt: Date;
     
 }

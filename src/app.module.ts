@@ -9,6 +9,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { ExceptionsLoggerFilter } from './utils/exceptionsLogger.filter';
 import { join } from 'path';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { AuthenticationModule } from './authentication/authentication.module';
       useFactory:(configService : ConfigService)=>({
         playground: true,
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-
+        formatError: (error: GraphQLError) => {
+          const graphQLFormattedError: GraphQLFormattedError = {
+            message: error.extensions?.exception?.response?.message || error.message,
+          };
+          return graphQLFormattedError;
+        }
       })
     }),
     ConfigModule.forRoot({

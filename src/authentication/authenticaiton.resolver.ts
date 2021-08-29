@@ -13,12 +13,18 @@ export class AuthenticationResolver {
     constructor(private readonly authenticationService: AuthenticationService){}
 
     @Mutation(returns => UserToken)
-    async login(@Args('input') input: LoginUserInput): Promise<void> {
+    async login(@Args('LoginUserInput') LoginUserInput: LoginUserInput): Promise<UserToken> {
+        const user = await this.authenticationService.getAuthenticatedUser(LoginUserInput);
+        const token = this.authenticationService.getCookieWithJwtToken(user.id);
+        return {
+            token,
+            user,
+        }
     }
 
     @Mutation(returns => UserToken)
-    async register(@Args('input') input: RegisterUserInput): Promise<UserToken>{
-       const user = await this.authenticationService.register(input);
+    async register(@Args('RegisterUserInput') RegisterUserInput: RegisterUserInput): Promise<UserToken>{
+       const user = await this.authenticationService.register(RegisterUserInput);
        const token = this.authenticationService.getCookieWithJwtToken(user.id)
         return {
             token,

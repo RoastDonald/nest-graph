@@ -5,6 +5,8 @@ import {PostgresErrorCode} from '../database/postgresErrorCode.enum';
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { RegisterUserInput } from "./dto/input/register-user.input";
+import { LoginUserInput } from "./dto/input/login-user.input";
+import { GraphQLError } from "graphql";
 
 @Injectable()
 export class AuthenticationService {
@@ -23,18 +25,18 @@ export class AuthenticationService {
             });
             return createdUser;
         }catch(error){
-            console.log(error)
             if(error?.code === PostgresErrorCode.UniqueViolation){
-                throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
+                throw new GraphQLError('User with that email already exists');
             }
             throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public async getAuthenticatedUser(email: string, plainTextPassword: string){
+    public async getAuthenticatedUser(loginData: LoginUserInput){
+        const {email, password} = loginData;
         try {
             const user = await this.usersService.getByEmail(email);
-            await this.verifyPassword(plainTextPassword,user.password);
+            await this.verifyPassword(password,user.password);
             return user;
         }catch(error){
             throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
